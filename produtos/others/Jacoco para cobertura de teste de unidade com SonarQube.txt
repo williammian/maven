@@ -1,0 +1,107 @@
+Jacoco para cobertura de teste de unidade com SonarQube
+
+https://www.java-success.com/sonarqube-wit-jacoco/
+
+1) Baixar SonarQube https://www.sonarqube.org/downloads/
+
+2) Descompactar zip ou utilizar via docker
+
+3) Após iniciar o servidor SonarQube, você pode acessá-lo em um navegador da web digitando http://localhost:9000
+
+4) Jacoco é a ferramenta de cobertura de código padrão fornecida com o SonarQube.
+SonarQube também pode ser configurado para usar Cobertura como a ferramenta de cobertura de código.
+
+5) O arquivo pom.xml precisa incluir as duas linhas a seguir na tag de propriedades.
+
+<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+
+-----------------------------------------------------------
+
+6) O pom.xml revisado com sonar e jacoco se parecerá com:
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+ 
+    <groupId>com.homeassigment</groupId>
+    <artifactId>homeassign-1-test</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+ 
+    <name>homeassign-1-test</name>
+    <url>http://maven.apache.org</url>
+ 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <logback.version>1.0.0</logback.version>
+        <slf4j.version>1.6.4</slf4j.version>
+ 
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    </properties>
+ 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>5.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+ 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+ 
+ 
+        <!-- Logging -->
+ 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+ 
+    </dependencies>
+</project>
+
+------------------------------------------------------------------------
+
+7) na linha de comando, execute o seguinte comando mvn
+
+mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install
+
+8) Para obter cobertura por teste, use o perfil coverage-per-test
+
+mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Pcoverage-per-test
+
+9) na linha de comando, execute o seguinte comando mvn
+
+mvn clean test sonar:sonar
+
+10) Acesse a web do sonar em http://localhost:9000 e clique na guia coverage para obter as métricas da cobertura de código conforme mostrado abaixo.
+

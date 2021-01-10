@@ -1,0 +1,110 @@
+SonarQube com Maven
+
+https://www.java-success.com/sonarcube-tutorial-for-java-developers/
+
+1) Baixar SonarQube https://www.sonarqube.org/downloads/
+
+2) Descompactar zip ou utilizar via docker
+
+3) Após iniciar o servidor SonarQube, você pode acessá-lo em um navegador da web digitando http://localhost:9000
+
+--------------------------------------------------------
+
+4) Seus projetos maven podem se conectar ao servidor em execução no localhost: 9000, fazendo as seguintes alterações no arquivo pom.xml do seu projeto
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+ 
+    <groupId>com.homeassigment</groupId>
+    <artifactId>homeassign-1-test</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+ 
+    <name>homeassign-1-test</name>
+    <url>http://maven.apache.org</url>
+ 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <logback.version>1.0.0</logback.version>
+        <slf4j.version>1.6.4</slf4j.version>
+    </properties>
+ 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>5.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+ 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+ 
+        <!-- Logging -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+ 
+    </dependencies>
+</project>
+
+--------------------------------------------------------
+
+5) sonar.host.url = http://localhost:9000
+
+Também pode ser configurado via Maven settings.xml (pasta do maven/conf)
+
+<profile>
+    <id>sonar</id>
+    <activation>
+	<activeByDefault>true</activeByDefault>
+    </activation>
+    <properties> -->
+	<!-- Optional URL to server. Default value is http://localhost:9000 -->
+	<sonar.host.url>http://localhost:9000</sonar.host.url>
+    </properties>
+</profile>
+
+----------------------------------------------------------
+
+6) A qualidade do sonar e do código detesta as declarações System.out.println (… ..) resultando como um grande problema de qualidade do código. 
+Portanto, use slf4j & logback em seu código.
+
+7) plugin de sonar Maven
+
+<groupId>org.codehaus.sonar</groupId>
+<artifactId>sonar-maven-plugin</artifactId>
+<version>5.3</version>
+
+8) Você pode publicar as métricas com 
+
+mvn clean install sonar:sonar
+

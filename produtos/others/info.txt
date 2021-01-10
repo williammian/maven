@@ -1,0 +1,239 @@
+Instalação do Maven
+
+https://maven.apache.org/download.cgi
+
+Binary zip archive
+
+Descompactar
+
+Editar a variável de ambiente Path acrescentando o diretório bin do maven
+
+Para verificar instalação e versão do maven
+mvn -v
+
+--------------------------------------------------
+
+Criando projeto com Maven
+
+mvn archetype:generate -DartifactId=produtos -DgroupId=br.com.alura.maven -DinteractiveMode=false -DarchetypeArtifactId=maven-archetype-quickstart
+
+---------------------------------------------------
+
+Comandos básicos
+
+mvn clean
+
+mvn compile
+
+mvn test
+
+mvn package
+
+mvn verify
+
+-------------------------------------------------
+
+Ciclo de Vida do Build (fases)
+
+validate - valida se o projeto está correto e todas as informações necessárias estão disponíveis
+
+compile - compila o código fonte do projeto
+
+test - testa o código-fonte compilado usando uma estrutura de teste de unidade adequada. Esses testes não devem exigir que o código seja empacotado ou implantado
+
+package - pega o código compilado e empacota-o em seu formato distribuível, como um JAR.
+
+verify - executa todas as verificações nos resultados dos testes de integração para garantir que os critérios de qualidade sejam atendidos
+
+install - instala o pacote no repositório local, para uso como uma dependência em outros projetos localmente
+
+deploy - feito no ambiente de construção, copia o pacote final para o repositório remoto para compartilhamento com outros desenvolvedores e projetos
+
+-------------------------------------------------
+
+Gerando relatório
+
+mvn surefire-report:report
+
+Dentro do diretório target/site será possível encontrar o relatório no arquivo surefire-report.html.
+
+-------------------------------------------------
+
+Repositório remoto
+
+https://mvnrepository.com/
+
+https://repo.maven.apache.org/maven2/
+
+--------------------------------------------------
+
+Repositório local
+
+Na Home do usuário, o diretório
+
+.m2/repository
+
+-------------------------------------------------
+
+Utilizando o plugin PMD - analisador de código-fonte
+
+Incluir o plugin no pom.xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!-- informações sobre o projeto -->
+    <dependencies>
+        <!-- dependências do junit e xstream -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.6</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+Para gerar o relatório, você deve utilizar o comando mvn pmd:pmd. 
+Caso existam violações no código-fonte, o arquivo pmd.html será criado em target/site, indicando quais são as violações.
+
+ou 
+
+mvn verify
+
+---------------------------------------------
+
+Utilizando o plugin JaCoCo - gera relatórios sobre a cobertura de testes do projeto
+
+Incluir o plugin no pom.xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!-- informacoes -->
+    <dependencies>
+        <!-- depedências -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- JaCoCo plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+
+mvn verify
+
+Poderemos acessar o relatório de cobertura que foi armazenado em "diretório base do projeto > target > site > jacoco > index.hrml".
+
+---------------------------------------------------
+
+Atualizando dependências do projeto
+
+Em projetos com muitas dependências, com o passar do tempo elas podem ficar desatualizadas, 
+caso você queira atualizar as dependências para suas versões mais atuais, poderá utilizar o seguinte comando:
+Este comando modifica o pom.xml
+
+mvn versions:use-latest-versions
+
+Existe um outro goal que verifica por atualizações sem de fato alterar o pom.xml
+
+mvn versions:display-dependency-updates
+
+---------------------------------------------------
+
+mvn package
+gera o pacote da aplicação jar ou war
+
+mvn clean package
+limpa o diretório target e gera o pacote da aplicação
+
+---------------------------------------------------
+
+Adicionando o projeto produtos como dependência para o projeto lojaweb
+
+No pom do lojaweb adicionar a seguinte dependência:
+
+<dependency>
+    <groupId>br.com.alura.maven</groupId>
+    <artifactId>produtos</artifactId>
+    <version>1.0-SNAPSHOT</version> 
+</dependency>
+
+Na raiz do projeto produtos executar:
+
+mvn install
+
+----------------------------------------------------
+
+Árvore de dependências
+
+mvn dependency:tree
+
+----------------------------------------------------
+
+Escopo das dependências
+
+compile
+
+Significa que a dependência estará em todos os classpaths: de compilação, teste e execução.
+Esse é o escopo padrão utilizado quando não declaramos um escopo na dependência.
+
+provided
+
+Significa que a dependência estará disponível para compilar e testar as classes, 
+mas que é esperado que o JDK ou o container disponibilize-a, 
+e por esse motivo a biblioteca não é adicionada ao artefato final quando geramos o pacote do nosso projeto.
+
+runtime
+
+Significa que a dependência não estará disponível para compilar. 
+Estará disponível apenas no momento da execução e também no classpath dos testes.
+
+test
+
+Dependência disponível apenas para teste.
+
+-------------------------------------------------------------
+
+Excluindo dependências
+
+exclusion
+
+<dependency>
+    <groupId>br.com.alura.maven</groupId>
+    <artifactId>produtos</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <exclusions>
+        <exclusion>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+
+---------------------------------------------------------------
